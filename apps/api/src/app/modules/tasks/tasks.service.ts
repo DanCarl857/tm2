@@ -21,25 +21,24 @@ export class TasksService {
   ) {}
 
   async create(userMaybe: AuthUser | undefined, dto: CreateTaskDto) {
-    const user = requireUser(userMaybe);
-    if (!canWrite(user.role))
-      throw new ForbiddenException('Role cannot create tasks');
+  const user = requireUser(userMaybe);
+  if (!canWrite(user.role))
+    throw new ForbiddenException('Role cannot create tasks');
 
-    const now = new Date().toISOString();
-    const t = this.tasks.create({
-      orgId: user.orgId, // safe default: create in home org
-      createdByUserId: user.userId,
-      title: dto.title,
-      description: dto.description ?? null,
-      category: dto.category,
-      status: dto.status,
-      order: dto.order,
-      createdAt: now,
-      updatedAt: now,
-    });
+  const t = this.tasks.create({
+    orgId: user.orgId, // safe default: create in home org
+    createdByUserId: user.userId,
+    title: dto.title,
+    description: dto.description ?? null,
+    category: dto.category ?? null,
+    status: dto.status ?? 'TODO',
+    order: dto.order ?? 0,
+    dueDate: (dto as any).dueDate ?? null, // if your DTO includes it
+  });
 
-    return this.tasks.save(t);
-  }
+  return this.tasks.save(t);
+}
+
 
   async listAccessible(userMaybe: AuthUser | undefined) {
     const user = requireUser(userMaybe);
@@ -64,7 +63,7 @@ export class TasksService {
     const t = await this.tasks.findOne({ where: { id, orgId: In(scope) } });
     if (!t) throw new NotFoundException('Task not found (or out of scope)');
 
-    Object.assign(t, { ...dto, updatedAt: new Date().toISOString() });
+    Object.assign(t, { ...dto});
     return this.tasks.save(t);
   }
 

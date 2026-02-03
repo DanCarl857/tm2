@@ -1,164 +1,227 @@
-<div
-  class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100"
->
-  <header
-    class="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-800"
-  >
-    <div>
-      <h1 class="text-xl font-semibold">Task Manager</h1>
-      <p class="text-sm opacity-70">Shortcuts: n=new, d=dark, /=search</p>
-    </div>
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+  <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 p-4">
+      <div class="flex items-center gap-3">
+        <div class="text-lg font-semibold">Task Manager</div>
+        <span class="text-xs text-slate-500 dark:text-slate-400">Ctrl/Cmd+N • / • Esc</span>
+      </div>
 
-    <div class="flex gap-2 items-center">
+      <div class="flex items-center gap-2">
+        <button class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700" (click)="toggleTheme()">
+          {{ theme() === 'dark' ? 'Light' : 'Dark' }}
+        </button>
+        <button class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700" (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl p-4">
+    <div class="mb-4 flex flex-wrap items-center gap-2">
       <input
-        id="search"
-        class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
-        placeholder="Search..."
-        (input)="store.setSearch($any($event.target).value)"
+        id="taskFilterInput"
+        class="w-64 rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        placeholder="Filter (press /)"
+        [value]="filterText()"
+        (input)="filterText.set(($any($event.target)).value)"
       />
 
       <select
-        class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
-        (change)="store.setCategory($any($event.target).value)"
+        class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        [value]="filterCategory()"
+        (change)="filterCategory.set(($any($event.target)).value)"
       >
         <option value="All">All</option>
         <option value="Work">Work</option>
         <option value="Personal">Personal</option>
       </select>
 
-      <button
-        class="px-3 py-2 rounded-lg bg-black text-white dark:bg-white dark:text-black"
-        (click)="toggleTheme()"
-      >
-        {{ dark() ? 'Light' : 'Dark' }}
-      </button>
-
-      <button
-        class="px-3 py-2 rounded-lg bg-indigo-600 text-white"
-        (click)="quickAdd()"
-      >
-        New
-      </button>
-
-      <button
-        class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700"
-        (click)="logout()"
-      >
-        Logout
+      <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900"
+              (click)="openCreate('TODO')">
+        New Task
       </button>
     </div>
-  </header>
 
-  <main class="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
-    <section class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid gap-4 md:grid-cols-3">
       <!-- TODO -->
-      <div
-        class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
-      >
-        <h2 class="font-semibold mb-2">TODO</h2>
+      <section class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+        <div class="mb-2 flex items-center justify-between">
+          <h2 class="font-semibold">To do</h2>
+          <button class="text-sm underline" (click)="openCreate('TODO')">+ Add</button>
+        </div>
+
         <div
+          class="min-h-[200px] space-y-2 rounded-lg"
           cdkDropList
-          (cdkDropListDropped)="onDrop($event, 'TODO')"
-          class="min-h-[300px] flex flex-col gap-2"
+          [id]="dropListId('TODO')"
+          [cdkDropListData]="todoList()"
+          [cdkDropListConnectedTo]="connectedDropListIds()"
+          (cdkDropListDropped)="dropped('TODO', $event)"
         >
           <div
-            *ngFor="let t of store.byStatus().TODO"
+            *ngFor="let t of todoList(); trackBy: trackById"
             cdkDrag
-            [cdkDragData]="t.id"
-            class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+            class="cursor-move rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950"
           >
-            <div class="flex justify-between items-start gap-2">
+            <div class="flex items-start justify-between gap-2">
               <div>
                 <div class="font-medium">{{ t.title }}</div>
-                <div class="text-xs opacity-70">{{ t.category }}</div>
+                <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ t.category || '—' }} • {{ t.dueDate ? (t.dueDate | slice:0:10) : 'No due date' }}
+                </div>
               </div>
               <div class="flex gap-2">
-                <button class="text-xs underline" (click)="toggleCategory(t)">
-                  Toggle Cat
-                </button>
-                <button
-                  class="text-xs underline text-red-500"
-                  (click)="removeTask(t.id)"
-                >
-                  Delete
-                </button>
+                <button class="text-xs underline" (click)="openEdit(t)">Edit</button>
+                <button class="text-xs underline text-red-600" (click)="deleteTask(t)">Delete</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- IN_PROGRESS -->
-      <div
-        class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
-      >
-        <h2 class="font-semibold mb-2">IN PROGRESS</h2>
+      <!-- IN PROGRESS -->
+      <section class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+        <div class="mb-2 flex items-center justify-between">
+          <h2 class="font-semibold">In progress</h2>
+          <button class="text-sm underline" (click)="openCreate('IN_PROGRESS')">+ Add</button>
+        </div>
+
         <div
+          class="min-h-[200px] space-y-2 rounded-lg"
           cdkDropList
-          (cdkDropListDropped)="onDrop($event, 'IN_PROGRESS')"
-          class="min-h-[300px] flex flex-col gap-2"
+          [id]="dropListId('IN_PROGRESS')"
+          [cdkDropListData]="inProgressList()"
+          [cdkDropListConnectedTo]="connectedDropListIds()"
+          (cdkDropListDropped)="dropped('IN_PROGRESS', $event)"
         >
           <div
-            *ngFor="let t of store.byStatus().IN_PROGRESS"
+            *ngFor="let t of inProgressList(); trackBy: trackById"
             cdkDrag
-            [cdkDragData]="t.id"
-            class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+            class="cursor-move rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950"
           >
-            <div class="flex justify-between items-start gap-2">
+            <div class="flex items-start justify-between gap-2">
               <div>
                 <div class="font-medium">{{ t.title }}</div>
-                <div class="text-xs opacity-70">{{ t.category }}</div>
+                <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ t.category || '—' }} • {{ t.dueDate ? (t.dueDate | slice:0:10) : 'No due date' }}
+                </div>
               </div>
-              <button
-                class="text-xs underline text-red-500"
-                (click)="removeTask(t.id)"
-              >
-                Delete
-              </button>
+              <div class="flex gap-2">
+                <button class="text-xs underline" (click)="openEdit(t)">Edit</button>
+                <button class="text-xs underline text-red-600" (click)="deleteTask(t)">Delete</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- DONE -->
-      <div
-        class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
-      >
-        <h2 class="font-semibold mb-2">DONE</h2>
+      <section class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+        <div class="mb-2 flex items-center justify-between">
+          <h2 class="font-semibold">Done</h2>
+          <button class="text-sm underline" (click)="openCreate('DONE')">+ Add</button>
+        </div>
+
         <div
+          class="min-h-[200px] space-y-2 rounded-lg"
           cdkDropList
-          (cdkDropListDropped)="onDrop($event, 'DONE')"
-          class="min-h-[300px] flex flex-col gap-2"
+          [id]="dropListId('DONE')"
+          [cdkDropListData]="doneList()"
+          [cdkDropListConnectedTo]="connectedDropListIds()"
+          (cdkDropListDropped)="dropped('DONE', $event)"
         >
           <div
-            *ngFor="let t of store.byStatus().DONE"
+            *ngFor="let t of doneList(); trackBy: trackById"
             cdkDrag
-            [cdkDragData]="t.id"
-            class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+            class="cursor-move rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950"
           >
-            <div class="flex justify-between items-start gap-2">
+            <div class="flex items-start justify-between gap-2">
               <div>
                 <div class="font-medium">{{ t.title }}</div>
-                <div class="text-xs opacity-70">{{ t.category }}</div>
+                <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ t.category || '—' }} • {{ t.dueDate ? (t.dueDate | slice:0:10) : 'No due date' }}
+                </div>
               </div>
-              <button
-                class="text-xs underline text-red-500"
-                (click)="removeTask(t.id)"
-              >
-                Delete
-              </button>
+              <div class="flex gap-2">
+                <button class="text-xs underline" (click)="openEdit(t)">Edit</button>
+                <button class="text-xs underline text-red-600" (click)="deleteTask(t)">Delete</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <aside
-      class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
-    >
-      <h2 class="font-semibold mb-2">Visualization</h2>
-      <canvas id="statusChart"></canvas>
-      <p class="text-xs opacity-70 mt-2">Counts by status.</p>
-    </aside>
+      </section>
+    </div>
   </main>
+
+  <!-- MODAL -->
+  <div *ngIf="modalOpen()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div class="w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl dark:bg-slate-950 dark:text-slate-100">
+      <div class="mb-3 flex items-center justify-between">
+        <div class="text-lg font-semibold">{{ editingId() ? 'Edit Task' : 'New Task' }}</div>
+        <button class="rounded-lg border px-3 py-1 text-sm dark:border-slate-700" (click)="closeModal()">Close</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="mb-1 block text-sm">Title</label>
+          <input
+            class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            placeholder="e.g. Pay invoices"
+            [value]="title()"
+            (input)="title.set(($any($event.target)).value)"
+          />
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div>
+            <label class="mb-1 block text-sm">Category</label>
+            <select
+              class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              [value]="category()"
+              (change)="category.set(($any($event.target)).value)"
+            >
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm">Due date</label>
+            <input
+              type="date"
+              class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              [value]="dueDate()"
+              (input)="dueDate.set(($any($event.target)).value)"
+            />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm">Status</label>
+            <select
+              class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              [value]="status()"
+              (change)="status.set(($any($event.target)).value)"
+            >
+              <option value="TODO">TODO</option>
+              <option value="IN_PROGRESS">IN PROGRESS</option>
+              <option value="DONE">DONE</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <button class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700" (click)="closeModal()">Cancel</button>
+        <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900"
+                (click)="saveModal()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

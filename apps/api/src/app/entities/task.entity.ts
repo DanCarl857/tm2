@@ -1,14 +1,25 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity('tasks')
+export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
+
+@Entity('task')
 export class TaskEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  // Tenant scope
   @Index()
   @Column({ type: 'text' })
   orgId!: string;
 
+  // Audit/ownership
   @Index()
   @Column({ type: 'text' })
   createdByUserId!: string;
@@ -17,21 +28,25 @@ export class TaskEntity {
   title!: string;
 
   @Column({ type: 'text', nullable: true })
-  description!: string | null;
+  category!: string | null;
 
-  @Column({ type: 'text' })
-  category!: 'Work' | 'Personal';
+  @Column({ type: 'text', nullable: true })
+  description!: string | null;
 
   @Index()
   @Column({ type: 'text' })
-  status!: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  status!: TaskStatus;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'int', default: 0 })
   order!: number;
 
-  @Column({ type: 'text' })
-  createdAt!: string;
+  // Optional due date (store as ISO string for sqlite simplicity)
+  @Column({ type: 'text', nullable: true })
+  dueDate!: string | null;
 
-  @Column({ type: 'text' })
-  updatedAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
