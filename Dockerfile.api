@@ -1,0 +1,18 @@
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json pnpm-lock.yaml nx.json tsconfig.base.json ./
+COPY apps ./apps
+COPY libs ./libs
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm install --frozen-lockfile
+RUN pnpm exec nx build api
+
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV SQLITE_PATH=/data/dev.sqlite
+COPY --from=build /app/dist/apps/api ./dist
+RUN mkdir -p /data
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

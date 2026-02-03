@@ -1,5 +1,5 @@
+import { Permission } from '@ckouetchua-87342/data';
 import { SetMetadata } from '@nestjs/common';
-import type { Permission } from '@ckouetchua-87342/data';
 
 export const PERMISSION_KEY = 'required_permission';
 

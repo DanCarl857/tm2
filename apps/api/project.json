@@ -18,6 +18,14 @@
         }
       }
     },
+    "e2e": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/api/jest.e2e.config.ts",
+        "passWithNoTests": false
+      }
+    },
     "prune-lockfile": {
       "dependsOn": ["build"],
       "cache": true,

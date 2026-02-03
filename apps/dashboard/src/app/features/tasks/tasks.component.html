@@ -1,0 +1,164 @@
+<div
+  class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100"
+>
+  <header
+    class="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-800"
+  >
+    <div>
+      <h1 class="text-xl font-semibold">Task Manager</h1>
+      <p class="text-sm opacity-70">Shortcuts: n=new, d=dark, /=search</p>
+    </div>
+
+    <div class="flex gap-2 items-center">
+      <input
+        id="search"
+        class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+        placeholder="Search..."
+        (input)="store.setSearch($any($event.target).value)"
+      />
+
+      <select
+        class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+        (change)="store.setCategory($any($event.target).value)"
+      >
+        <option value="All">All</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+      </select>
+
+      <button
+        class="px-3 py-2 rounded-lg bg-black text-white dark:bg-white dark:text-black"
+        (click)="toggleTheme()"
+      >
+        {{ dark() ? 'Light' : 'Dark' }}
+      </button>
+
+      <button
+        class="px-3 py-2 rounded-lg bg-indigo-600 text-white"
+        (click)="quickAdd()"
+      >
+        New
+      </button>
+
+      <button
+        class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <section class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- TODO -->
+      <div
+        class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
+      >
+        <h2 class="font-semibold mb-2">TODO</h2>
+        <div
+          cdkDropList
+          (cdkDropListDropped)="onDrop($event, 'TODO')"
+          class="min-h-[300px] flex flex-col gap-2"
+        >
+          <div
+            *ngFor="let t of store.byStatus().TODO"
+            cdkDrag
+            [cdkDragData]="t.id"
+            class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+          >
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="font-medium">{{ t.title }}</div>
+                <div class="text-xs opacity-70">{{ t.category }}</div>
+              </div>
+              <div class="flex gap-2">
+                <button class="text-xs underline" (click)="toggleCategory(t)">
+                  Toggle Cat
+                </button>
+                <button
+                  class="text-xs underline text-red-500"
+                  (click)="removeTask(t.id)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IN_PROGRESS -->
+      <div
+        class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
+      >
+        <h2 class="font-semibold mb-2">IN PROGRESS</h2>
+        <div
+          cdkDropList
+          (cdkDropListDropped)="onDrop($event, 'IN_PROGRESS')"
+          class="min-h-[300px] flex flex-col gap-2"
+        >
+          <div
+            *ngFor="let t of store.byStatus().IN_PROGRESS"
+            cdkDrag
+            [cdkDragData]="t.id"
+            class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+          >
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="font-medium">{{ t.title }}</div>
+                <div class="text-xs opacity-70">{{ t.category }}</div>
+              </div>
+              <button
+                class="text-xs underline text-red-500"
+                (click)="removeTask(t.id)"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DONE -->
+      <div
+        class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
+      >
+        <h2 class="font-semibold mb-2">DONE</h2>
+        <div
+          cdkDropList
+          (cdkDropListDropped)="onDrop($event, 'DONE')"
+          class="min-h-[300px] flex flex-col gap-2"
+        >
+          <div
+            *ngFor="let t of store.byStatus().DONE"
+            cdkDrag
+            [cdkDragData]="t.id"
+            class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+          >
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="font-medium">{{ t.title }}</div>
+                <div class="text-xs opacity-70">{{ t.category }}</div>
+              </div>
+              <button
+                class="text-xs underline text-red-500"
+                (click)="removeTask(t.id)"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside
+      class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3"
+    >
+      <h2 class="font-semibold mb-2">Visualization</h2>
+      <canvas id="statusChart"></canvas>
+      <p class="text-xs opacity-70 mt-2">Counts by status.</p>
+    </aside>
+  </main>
+</div>
