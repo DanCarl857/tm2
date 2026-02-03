@@ -32,20 +32,29 @@ export class TenantContextMiddleware implements NestMiddleware {
     const originalUrl = String(req.originalUrl ?? '').split('?')[0];
     const baseUrl = String(req.baseUrl ?? '').split('?')[0];
 
-    console.log('MW CHECK', { originalUrl, baseUrl, method: req.method });
-
-    // Allow swagger + auth routes WITHOUT tenant/JWT
-    if (
+    const isPublic =
       originalUrl.startsWith('/auth') ||
       baseUrl.startsWith('/auth') ||
       originalUrl === '/swagger' ||
       originalUrl.startsWith('/swagger/') ||
       originalUrl === '/swagger-json' ||
       originalUrl.startsWith('/swagger-json') ||
-      originalUrl.startsWith('/favicon')
-    ) {
+      originalUrl.startsWith('/favicon');
+
+    if (isPublic) {
+      console.log('TENANT MW BYPASS HIT', {
+        originalUrl,
+        baseUrl,
+        method: req.method,
+      });
       return next();
     }
+
+    console.log('TENANT MW ENFORCING', {
+      originalUrl,
+      baseUrl,
+      method: req.method,
+    });
 
     const token = bearerToken(req);
     if (!token) throw new UnauthorizedException('Missing bearer token');

@@ -1,4 +1,12 @@
-import { IsEmail, IsEnum, IsInt, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+  MinLength,
+} from 'class-validator';
 import type { Role, TaskStatus, TaskCategory } from './models';
 
 export class LoginDto {
