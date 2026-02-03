@@ -1,0 +1,361 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<div
+  class="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+>
+  <header
+    class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80"
+  >
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 p-4">
+      <div class="flex items-center gap-3">
+        <div class="text-lg font-semibold">Task Manager</div>
+        <span class="text-xs text-slate-500 dark:text-slate-400"
+          >Ctrl/Cmd+N • / • Esc</span
+        >
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700"
+          (click)="toggleTheme()"
+        >
+          {{ theme() === 'dark' ? 'Light' : 'Dark' }}
+        </button>
+        <button
+          class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700"
+          (click)="logout()"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl p-4">
+    <!-- CHART: TODO vs IN_PROGRESS vs DONE -->
+    <section
+      class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/40"
+    >
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="text-sm font-semibold">Progress</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400">
+            Live task distribution
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-600 dark:text-slate-300">
+          Total: <span class="font-semibold">{{ totalCount() }}</span> • TODO:
+          <span class="font-semibold">{{ todoList().length }}</span> • IN
+          PROGRESS:
+          <span class="font-semibold">{{ inProgressList().length }}</span> •
+          DONE: <span class="font-semibold">{{ doneList().length }}</span>
+        </div>
+      </div>
+
+      <!-- stacked bar -->
+      <div
+        class="flex h-4 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800"
+      >
+        <div
+          class="h-4 bg-slate-400 dark:bg-slate-600 transition-all"
+          [style.width.%]="todoPct()"
+          title="TODO"
+        ></div>
+
+        <div
+          class="h-4 bg-amber-500 transition-all"
+          [style.width.%]="inProgressPct()"
+          title="IN PROGRESS"
+        ></div>
+
+        <div
+          class="h-4 bg-emerald-500 transition-all"
+          [style.width.%]="donePct()"
+          title="DONE"
+        ></div>
+      </div>
+
+      <div
+        class="mt-2 flex flex-wrap gap-3 text-xs text-slate-600 dark:text-slate-300"
+      >
+        <span>
+          <span
+            class="mr-1 inline-block h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-600"
+          ></span>
+          TODO ({{ todoList().length }})
+        </span>
+        <span>
+          <span
+            class="mr-1 inline-block h-2 w-2 rounded-full bg-amber-500"
+          ></span>
+          IN PROGRESS ({{ inProgressList().length }})
+        </span>
+        <span>
+          <span
+            class="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-500"
+          ></span>
+          DONE ({{ doneList().length }})
+        </span>
+      </div>
+    </section>
+
+    <div class="mb-4 flex flex-wrap items-center gap-2">
+      <input
+        id="taskFilterInput"
+        class="w-64 rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        placeholder="Filter (press /)"
+        [value]="filterText()"
+        (input)="filterText.set($any($event.target).value)"
+      />
+
+      <select
+        class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        [value]="filterCategory()"
+        (change)="filterCategory.set($any($event.target).value)"
+      >
+        <option value="All">All</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+      </select>
+
+      <button
+        class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900"
+        (click)="openCreate('TODO')"
+      >
+        New Task
+      </button>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-3">
+      <section
+        class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40"
+      >
+        <div class="mb-2 flex items-center justify-between">
+          <h2 class="font-semibold">To do</h2>
+          <button class="text-sm underline" (click)="openCreate('TODO')">
+            + Add
+          </button>
+        </div>
+
+        <div
+          class="min-h-[200px] space-y-2 rounded-lg"
+          cdkDropList
+          [id]="dropListId('TODO')"
+          [cdkDropListData]="todoList()"
+          [cdkDropListConnectedTo]="connectedDropListIds()"
+          (cdkDropListDropped)="dropped('TODO', $event)"
+        >
+          <div
+            *ngFor="let t of todoList(); trackBy: trackById"
+            cdkDrag
+            class="cursor-move rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="font-medium">{{ t.title }}</div>
+                <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ t.category || '—' }} •
+                  {{ t.dueDate ? (t.dueDate | slice: 0 : 10) : 'No due date' }}
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button class="text-xs underline" (click)="openEdit(t)">
+                  Edit
+                </button>
+                <button
+                  class="text-xs underline text-red-600"
+                  (click)="deleteTask(t)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- IN PROGRESS -->
+      <section
+        class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40"
+      >
+        <div class="mb-2 flex items-center justify-between">
+          <h2 class="font-semibold">In progress</h2>
+          <button class="text-sm underline" (click)="openCreate('IN_PROGRESS')">
+            + Add
+          </button>
+        </div>
+
+        <div
+          class="min-h-[200px] space-y-2 rounded-lg"
+          cdkDropList
+          [id]="dropListId('IN_PROGRESS')"
+          [cdkDropListData]="inProgressList()"
+          [cdkDropListConnectedTo]="connectedDropListIds()"
+          (cdkDropListDropped)="dropped('IN_PROGRESS', $event)"
+        >
+          <div
+            *ngFor="let t of inProgressList(); trackBy: trackById"
+            cdkDrag
+            class="cursor-move rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="font-medium">{{ t.title }}</div>
+                <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ t.category || '—' }} •
+                  {{ t.dueDate ? (t.dueDate | slice: 0 : 10) : 'No due date' }}
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button class="text-xs underline" (click)="openEdit(t)">
+                  Edit
+                </button>
+                <button
+                  class="text-xs underline text-red-600"
+                  (click)="deleteTask(t)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DONE -->
+      <section
+        class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40"
+      >
+        <div class="mb-2 flex items-center justify-between">
+          <h2 class="font-semibold">Done</h2>
+          <button class="text-sm underline" (click)="openCreate('DONE')">
+            + Add
+          </button>
+        </div>
+
+        <div
+          class="min-h-[200px] space-y-2 rounded-lg"
+          cdkDropList
+          [id]="dropListId('DONE')"
+          [cdkDropListData]="doneList()"
+          [cdkDropListConnectedTo]="connectedDropListIds()"
+          (cdkDropListDropped)="dropped('DONE', $event)"
+        >
+          <div
+            *ngFor="let t of doneList(); trackBy: trackById"
+            cdkDrag
+            class="cursor-move rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="font-medium">{{ t.title }}</div>
+                <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {{ t.category || '—' }} •
+                  {{ t.dueDate ? (t.dueDate | slice: 0 : 10) : 'No due date' }}
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button class="text-xs underline" (click)="openEdit(t)">
+                  Edit
+                </button>
+                <button
+                  class="text-xs underline text-red-600"
+                  (click)="deleteTask(t)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div
+    *ngIf="modalOpen()"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+  >
+    <div
+      class="w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl dark:bg-slate-950 dark:text-slate-100"
+    >
+      <div class="mb-3 flex items-center justify-between">
+        <div class="text-lg font-semibold">
+          {{ editingId() ? 'Edit Task' : 'New Task' }}
+        </div>
+        <button
+          class="rounded-lg border px-3 py-1 text-sm dark:border-slate-700"
+          (click)="closeModal()"
+        >
+          Close
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="mb-1 block text-sm">Title</label>
+          <input
+            class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            placeholder="e.g. Pay invoices"
+            [value]="title()"
+            (input)="title.set($any($event.target).value)"
+          />
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div>
+            <label class="mb-1 block text-sm">Category</label>
+            <select
+              class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              [value]="category()"
+              (change)="category.set($any($event.target).value)"
+            >
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm">Due date</label>
+            <input
+              type="date"
+              class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              [value]="dueDate()"
+              (input)="dueDate.set($any($event.target).value)"
+            />
+          </div>
+
+          <div>
+            <label class="mb-1 block text-sm">Status</label>
+            <select
+              class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              [value]="status()"
+              (change)="status.set($any($event.target).value)"
+            >
+              <option value="TODO">TODO</option>
+              <option value="IN_PROGRESS">IN PROGRESS</option>
+              <option value="DONE">DONE</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <button
+          class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700"
+          (click)="closeModal()"
+        >
+          Cancel
+        </button>
+        <button
+          class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900"
+          (click)="saveModal()"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

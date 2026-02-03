@@ -11,9 +11,9 @@
   },
   "include": ["src/**/*.ts"],
   "exclude": [
-    "jest.config.ts",
-    "jest.config.cts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
+    "src/test/**/*.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.e2e-spec.ts"
   ]
 }

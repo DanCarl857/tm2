@@ -8,7 +8,7 @@
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
     "target": "es2022",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node10",
     "emitDecoratorMetadata": false,
     "module": "preserve"
   },
@@ -26,6 +26,9 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
     }
   ]
 }
