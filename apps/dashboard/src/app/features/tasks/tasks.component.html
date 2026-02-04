@@ -224,12 +224,6 @@
       </section>
 
       <!-- DONE -->
-<<<<<<< HEAD
-      <section class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
-        <div class="mb-2 flex items-center justify-between">
-          <h2 class="font-semibold">Done</h2>
-          <button class="text-sm underline" (click)="openCreate('DONE')">+ Add</button>
-=======
       <section
         class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40"
       >
@@ -238,7 +232,6 @@
           <button class="text-sm underline" (click)="openCreate('DONE')">
             + Add
           </button>
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
         </div>
 
         <div
@@ -258,14 +251,6 @@
               <div>
                 <div class="font-medium">{{ t.title }}</div>
                 <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-<<<<<<< HEAD
-                  {{ t.category || '—' }} • {{ t.dueDate ? (t.dueDate | slice:0:10) : 'No due date' }}
-                </div>
-              </div>
-              <div class="flex gap-2">
-                <button class="text-xs underline" (click)="openEdit(t)">Edit</button>
-                <button class="text-xs underline text-red-600" (click)="deleteTask(t)">Delete</button>
-=======
                   {{ t.category || '—' }} •
                   {{ t.dueDate ? (t.dueDate | slice: 0 : 10) : 'No due date' }}
                 </div>
@@ -280,7 +265,6 @@
                 >
                   Delete
                 </button>
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
               </div>
             </div>
           </div>
@@ -290,13 +274,6 @@
   </main>
 
   <!-- MODAL -->
-<<<<<<< HEAD
-  <div *ngIf="modalOpen()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-    <div class="w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl dark:bg-slate-950 dark:text-slate-100">
-      <div class="mb-3 flex items-center justify-between">
-        <div class="text-lg font-semibold">{{ editingId() ? 'Edit Task' : 'New Task' }}</div>
-        <button class="rounded-lg border px-3 py-1 text-sm dark:border-slate-700" (click)="closeModal()">Close</button>
-=======
   <div
     *ngIf="modalOpen()"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
@@ -314,7 +291,6 @@
         >
           Close
         </button>
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
       </div>
 
       <div class="space-y-3">
@@ -324,11 +300,7 @@
             class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
             placeholder="e.g. Pay invoices"
             [value]="title()"
-<<<<<<< HEAD
-            (input)="title.set(($any($event.target)).value)"
-=======
             (input)="title.set($any($event.target).value)"
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
           />
         </div>
 
@@ -338,11 +310,7 @@
             <select
               class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
               [value]="category()"
-<<<<<<< HEAD
-              (change)="category.set(($any($event.target)).value)"
-=======
               (change)="category.set($any($event.target).value)"
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
             >
               <option value="Work">Work</option>
               <option value="Personal">Personal</option>
@@ -355,11 +323,7 @@
               type="date"
               class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
               [value]="dueDate()"
-<<<<<<< HEAD
-              (input)="dueDate.set(($any($event.target)).value)"
-=======
               (input)="dueDate.set($any($event.target).value)"
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
             />
           </div>
 
@@ -368,11 +332,7 @@
             <select
               class="w-full rounded-lg border px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
               [value]="status()"
-<<<<<<< HEAD
-              (change)="status.set(($any($event.target)).value)"
-=======
               (change)="status.set($any($event.target).value)"
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
             >
               <option value="TODO">TODO</option>
               <option value="IN_PROGRESS">IN PROGRESS</option>
@@ -383,11 +343,6 @@
       </div>
 
       <div class="mt-4 flex justify-end gap-2">
-<<<<<<< HEAD
-        <button class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700" (click)="closeModal()">Cancel</button>
-        <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900"
-                (click)="saveModal()">
-=======
         <button
           class="rounded-lg border px-3 py-2 text-sm dark:border-slate-700"
           (click)="closeModal()"
@@ -398,7 +353,6 @@
           class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white dark:bg-slate-100 dark:text-slate-900"
           (click)="saveModal()"
         >
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
           Save
         </button>
       </div>

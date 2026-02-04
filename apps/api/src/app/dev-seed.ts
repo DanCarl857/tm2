@@ -344,14 +344,6 @@ export async function devSeed(ds: DataSource) {
   console.log('Dev seed complete.');
   console.log('Password for all demo users: password123');
   console.log('--- DEMO LOGINS ---');
-<<<<<<< HEAD
-  console.log('Alpha A: owner@alpha-a.com | admin@alpha-a.com | viewer@alpha-a.com');
-  console.log('Alpha B: owner@alpha-b.com | admin@alpha-b.com | viewer@alpha-b.com');
-  console.log('Alpha parent admin (Model A): admin@alpha-parent.com (should see Alpha A/B/C tasks)');
-  console.log('Beta A: owner@beta-a.com | admin@beta-a.com | viewer@beta-a.com');
-  console.log('Beta parent admin: admin@beta-parent.com');
-  console.log('Gamma A: owner@gamma-a.com | admin@gamma-a.com | viewer@gamma-a.com');
-=======
   console.log(
     'Alpha A: owner@alpha-a.com | admin@alpha-a.com | viewer@alpha-a.com',
   );
@@ -368,6 +360,5 @@ export async function devSeed(ds: DataSource) {
   console.log(
     'Gamma A: owner@gamma-a.com | admin@gamma-a.com | viewer@gamma-a.com',
   );
->>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
   console.log('Gamma parent admin: admin@gamma-parent.com');
 }
