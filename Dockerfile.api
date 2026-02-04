@@ -1,18 +1,31 @@
 FROM node:20-alpine AS build
 WORKDIR /app
-COPY package.json pnpm-lock.yaml nx.json tsconfig.base.json ./
+
+ENV CYPRESS_INSTALL_BINARY=0
+
+COPY package.json package-lock.json nx.json tsconfig.base.json ./
 COPY apps ./apps
 COPY libs ./libs
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm install --frozen-lockfile
-RUN pnpm exec nx build api
 
+RUN npm ci
+RUN npx nx build api
+
+# ---------- RUNTIME ----------
 FROM node:20-alpine
 WORKDIR /app
+
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV SQLITE_PATH=/data/dev.sqlite
+
+# Install only prod deps for runtime
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# Copy compiled output
 COPY --from=build /app/dist/apps/api ./dist
+
 RUN mkdir -p /data
 EXPOSE 3000
+
 CMD ["node", "dist/main.js"]
