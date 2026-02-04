@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import {
   CdkDragDrop,
@@ -73,6 +74,26 @@ export class TasksComponent {
   inProgressList = signal<Task[]>([]);
   doneList = signal<Task[]>([]);
 
+  // ---------- CHART METRICS ----------
+  totalCount = computed(
+    () =>
+      this.todoList().length +
+      this.inProgressList().length +
+      this.doneList().length,
+  );
+
+  todoPct = computed(() =>
+    this.totalCount() ? (this.todoList().length * 100) / this.totalCount() : 0,
+  );
+  inProgressPct = computed(() =>
+    this.totalCount()
+      ? (this.inProgressList().length * 100) / this.totalCount()
+      : 0,
+  );
+  donePct = computed(() =>
+    this.totalCount() ? (this.doneList().length * 100) / this.totalCount() : 0,
+  );
+
   constructor() {
     // apply theme immediately
     this.applyTheme(this.theme());
@@ -88,7 +109,11 @@ export class TasksComponent {
       const cat = this.filterCategory();
 
       const matches = (t: Task) => {
-        if (cat !== 'All' && (t.category ?? '').toLowerCase() !== cat.toLowerCase()) return false;
+        if (
+          cat !== 'All' &&
+          (t.category ?? '').toLowerCase() !== cat.toLowerCase()
+        )
+          return false;
         if (!text) return true;
         return (
           t.title.toLowerCase().includes(text) ||
@@ -124,7 +149,9 @@ export class TasksComponent {
     }
     // "/" focuses filter input (if present)
     if (e.key === '/' && !this.modalOpen()) {
-      const el = document.getElementById('taskFilterInput') as HTMLInputElement | null;
+      const el = document.getElementById(
+        'taskFilterInput',
+      ) as HTMLInputElement | null;
       if (el) {
         e.preventDefault();
         el.focus();
@@ -181,6 +208,7 @@ export class TasksComponent {
     if (!id) {
       const create: TaskCreateIn = {
         ...base,
+        order: 0,
         // order: 0, // backend/service can normalize later; store will also fix order after refresh
       };
       await this.tasksStore.create(create);

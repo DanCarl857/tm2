@@ -13,6 +13,7 @@ export interface Task {
 
 export interface TaskCreateIn {
   title: string;
+  order?: number;
   category?: string | null;
   status?: TaskStatus;
   dueDate?: string | null;

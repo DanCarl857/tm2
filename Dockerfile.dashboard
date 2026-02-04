@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package.json pnpm-lock.yaml nx.json tsconfig.base.json ./
@@ -7,6 +8,30 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN pnpm install --frozen-lockfile
 RUN pnpm exec nx build dashboard
 
+=======
+# ---------- BUILD STAGE ----------
+# ---------- BUILD STAGE ----------
+FROM node:20-alpine AS build
+WORKDIR /app
+
+# Prevent Cypress binary download during install (common in Nx repos)
+ENV CYPRESS_INSTALL_BINARY=0
+
+# copy manifests first for caching
+COPY package.json package-lock.json nx.json tsconfig.base.json ./
+
+# IMPORTANT: install deps before running nx
+RUN npm ci
+
+# copy sources after deps
+COPY apps ./apps
+COPY libs ./libs
+
+# build
+RUN npx nx build dashboard
+
+# ---------- RUNTIME STAGE ----------
+>>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
 FROM nginx:alpine
 COPY --from=build /app/dist/apps/dashboard /usr/share/nginx/html
 EXPOSE 80

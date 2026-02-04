@@ -190,134 +190,135 @@ export async function devSeed(ds: DataSource) {
   });
 
   // ----------------------------
-  // TASKS (createdByUserId required)
+  // TASKS 
   // ----------------------------
-  const taskSeeds: Array<Partial<TaskEntity> & { orgId: string; title: string }> =
-    [
-      // Alpha A (created by Alpha A owner/admin)
-      {
-        orgId: alphaA.id,
-        createdByUserId: alphaA_owner.id,
-        title: 'Alpha A: Pay invoices',
-        category: 'Work',
-        description: null,
-        status: 'TODO',
-        order: 0,
-        dueDate: datePlusDays(2),
-      },
-      {
-        orgId: alphaA.id,
-        createdByUserId: alphaA_admin.id,
-        title: 'Alpha A: Gym',
-        category: 'Personal',
-        description: null,
-        status: 'IN_PROGRESS',
-        order: 0,
-        dueDate: datePlusDays(5),
-      },
-      {
-        orgId: alphaA.id,
-        createdByUserId: alphaA_owner.id,
-        title: 'Alpha A: File reports',
-        category: 'Work',
-        description: null,
-        status: 'DONE',
-        order: 0,
-        dueDate: null,
-      },
+  const taskSeeds: Array<
+    Partial<TaskEntity> & { orgId: string; title: string }
+  > = [
+    // Alpha A (created by Alpha A owner/admin)
+    {
+      orgId: alphaA.id,
+      createdByUserId: alphaA_owner.id,
+      title: 'Alpha A: Pay invoices',
+      category: 'Work',
+      description: null,
+      status: 'TODO',
+      order: 0,
+      dueDate: datePlusDays(2),
+    },
+    {
+      orgId: alphaA.id,
+      createdByUserId: alphaA_admin.id,
+      title: 'Alpha A: Gym',
+      category: 'Personal',
+      description: null,
+      status: 'IN_PROGRESS',
+      order: 0,
+      dueDate: datePlusDays(5),
+    },
+    {
+      orgId: alphaA.id,
+      createdByUserId: alphaA_owner.id,
+      title: 'Alpha A: File reports',
+      category: 'Work',
+      description: null,
+      status: 'DONE',
+      order: 0,
+      dueDate: null,
+    },
 
-      // Alpha B (created by Alpha B owner)
-      {
-        orgId: alphaB.id,
-        createdByUserId: alphaB_owner.id,
-        title: 'Alpha B: Onboard user',
-        category: 'Work',
-        description: null,
-        status: 'TODO',
-        order: 0,
-        dueDate: datePlusDays(3),
-      },
-      {
-        orgId: alphaB.id,
-        createdByUserId: alphaB_owner.id,
-        title: 'Alpha B: Update docs',
-        category: 'Work',
-        description: null,
-        status: 'IN_PROGRESS',
-        order: 0,
-        dueDate: null,
-      },
+    // Alpha B (created by Alpha B owner)
+    {
+      orgId: alphaB.id,
+      createdByUserId: alphaB_owner.id,
+      title: 'Alpha B: Onboard user',
+      category: 'Work',
+      description: null,
+      status: 'TODO',
+      order: 0,
+      dueDate: datePlusDays(3),
+    },
+    {
+      orgId: alphaB.id,
+      createdByUserId: alphaB_owner.id,
+      title: 'Alpha B: Update docs',
+      category: 'Work',
+      description: null,
+      status: 'IN_PROGRESS',
+      order: 0,
+      dueDate: null,
+    },
 
-      // Alpha C (no dedicated users in this seed; created by Alpha parent admin)
-      {
-        orgId: alphaC.id,
-        createdByUserId: alpha_parent_admin.id,
-        title: 'Alpha C: Personal errand',
-        category: 'Personal',
-        description: null,
-        status: 'TODO',
-        order: 0,
-        dueDate: datePlusDays(7),
-      },
+    // Alpha C (no dedicated users in this seed; created by Alpha parent admin)
+    {
+      orgId: alphaC.id,
+      createdByUserId: alpha_parent_admin.id,
+      title: 'Alpha C: Personal errand',
+      category: 'Personal',
+      description: null,
+      status: 'TODO',
+      order: 0,
+      dueDate: datePlusDays(7),
+    },
 
-      // Beta A (created by Beta A owner)
-      {
-        orgId: betaA.id,
-        createdByUserId: betaA_owner.id,
-        title: 'Beta A: Tenant isolated task',
-        category: 'Work',
-        description: null,
-        status: 'TODO',
-        order: 0,
-        dueDate: datePlusDays(1),
-      },
-      {
-        orgId: betaA.id,
-        createdByUserId: betaA_owner.id,
-        title: 'Beta A: Clean inbox',
-        category: 'Work',
-        description: null,
-        status: 'DONE',
-        order: 0,
-        dueDate: null,
-      },
+    // Beta A (created by Beta A owner)
+    {
+      orgId: betaA.id,
+      createdByUserId: betaA_owner.id,
+      title: 'Beta A: Tenant isolated task',
+      category: 'Work',
+      description: null,
+      status: 'TODO',
+      order: 0,
+      dueDate: datePlusDays(1),
+    },
+    {
+      orgId: betaA.id,
+      createdByUserId: betaA_owner.id,
+      title: 'Beta A: Clean inbox',
+      category: 'Work',
+      description: null,
+      status: 'DONE',
+      order: 0,
+      dueDate: null,
+    },
 
-      // Beta B (no dedicated users in this seed; created by Beta parent admin)
-      {
-        orgId: betaB.id,
-        createdByUserId: beta_parent_admin.id,
-        title: 'Beta B: Plan sprint',
-        category: 'Work',
-        description: null,
-        status: 'IN_PROGRESS',
-        order: 0,
-        dueDate: datePlusDays(4),
-      },
+    // Beta B (no dedicated users in this seed; created by Beta parent admin)
+    {
+      orgId: betaB.id,
+      createdByUserId: beta_parent_admin.id,
+      title: 'Beta B: Plan sprint',
+      category: 'Work',
+      description: null,
+      status: 'IN_PROGRESS',
+      order: 0,
+      dueDate: datePlusDays(4),
+    },
 
-      // Gamma A (created by Gamma A owner)
-      {
-        orgId: gammaA.id,
-        createdByUserId: gammaA_owner.id,
-        title: 'Gamma A: Call client',
-        category: 'Work',
-        description: null,
-        status: 'TODO',
-        order: 0,
-        dueDate: datePlusDays(2),
-      },
+    // Gamma A (created by Gamma A owner)
+    {
+      orgId: gammaA.id,
+      createdByUserId: gammaA_owner.id,
+      title: 'Gamma A: Call client',
+      category: 'Work',
+      description: null,
+      status: 'TODO',
+      order: 0,
+      dueDate: datePlusDays(2),
+    },
 
-      // Gamma B (no dedicated users in this seed; created by Gamma parent admin)
-      {
-        orgId: gammaB.id,
-        createdByUserId: gamma_parent_admin.id,
-        title: 'Gamma B: Personal reading',
-        category: 'Personal',
-        description: null,
-        status: 'DONE',
-        order: 0,
-        dueDate: null,
-      },
-    ];
+    // Gamma B (no dedicated users in this seed; created by Gamma parent admin)
+    {
+      orgId: gammaB.id,
+      createdByUserId: gamma_parent_admin.id,
+      title: 'Gamma B: Personal reading',
+      category: 'Personal',
+      description: null,
+      status: 'DONE',
+      order: 0,
+      dueDate: null,
+    },
+  ];
 
   for (const t of taskSeeds) {
     await upsertTask(taskRepo, t);
@@ -343,11 +344,30 @@ export async function devSeed(ds: DataSource) {
   console.log('Dev seed complete.');
   console.log('Password for all demo users: password123');
   console.log('--- DEMO LOGINS ---');
+<<<<<<< HEAD
   console.log('Alpha A: owner@alpha-a.com | admin@alpha-a.com | viewer@alpha-a.com');
   console.log('Alpha B: owner@alpha-b.com | admin@alpha-b.com | viewer@alpha-b.com');
   console.log('Alpha parent admin (Model A): admin@alpha-parent.com (should see Alpha A/B/C tasks)');
   console.log('Beta A: owner@beta-a.com | admin@beta-a.com | viewer@beta-a.com');
   console.log('Beta parent admin: admin@beta-parent.com');
   console.log('Gamma A: owner@gamma-a.com | admin@gamma-a.com | viewer@gamma-a.com');
+=======
+  console.log(
+    'Alpha A: owner@alpha-a.com | admin@alpha-a.com | viewer@alpha-a.com',
+  );
+  console.log(
+    'Alpha B: owner@alpha-b.com | admin@alpha-b.com | viewer@alpha-b.com',
+  );
+  console.log(
+    'Alpha parent admin (Model A): admin@alpha-parent.com (should see Alpha A/B/C tasks)',
+  );
+  console.log(
+    'Beta A: owner@beta-a.com | admin@beta-a.com | viewer@beta-a.com',
+  );
+  console.log('Beta parent admin: admin@beta-parent.com');
+  console.log(
+    'Gamma A: owner@gamma-a.com | admin@gamma-a.com | viewer@gamma-a.com',
+  );
+>>>>>>> a62be91328b1d8529d98fa4708aa3e3bd93f1716
   console.log('Gamma parent admin: admin@gamma-parent.com');
 }
