@@ -628,11 +628,14 @@ Benefits:
 
 ## 🔮 Future Considerations
 
+- SSE for platform notifications
+- Better user feedback and error logging
+- Better request logging and monitoring
 - Advanced role delegation per org
 - Fine-grained permissions per resource
 - CSRF protection for refresh tokens
 - RBAC decision caching
-- Auditing + activity logs
+- Display auditing logs in a more intuitive way on the frontend
 - Horizontal scaling with stateless auth
 
 ---
